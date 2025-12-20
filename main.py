@@ -1,7 +1,9 @@
+import curses
 import time
 import numpy as np
 import conway
 import cursesui
+import seed
 
 if __name__ == "__notmain__":
   array = np.random.randint(0, 2, size=(10, 10))
@@ -24,4 +26,5 @@ if __name__ == "__notmain__":
 
 
 if __name__ == "__main__":
-  cursesui.gui()
+  array = np.random.randint(0, 2, size=(10, 10))
+  cursesui.gui(array)
