@@ -1,7 +1,6 @@
 import numpy as np
 from numpy._typing import NDArray
 
-#array = np.random.randint(0, 2, size=(10, 10))
 
 def copyArray(array: NDArray):
   new_array = np.zeros((10, 10))
@@ -50,10 +49,5 @@ def conwayPass(array: NDArray):
   for x in range(10):
     for y in range(10):
       new_array[x, y] = conway(array, x, y)
-      #new_array[x + 1, y + 1] = array[x, y]
   return new_array
 
-#print(array)
-#array = conwayPass(array)
-#print(array)
-#print(detectNeighbours(array, 0, 0))

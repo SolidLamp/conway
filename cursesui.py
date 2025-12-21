@@ -31,15 +31,13 @@ def drawArray(win, array: NDArray):
       win.refresh()
   else:
     for i2 in range(20):
-      i = math.floor(i2 / 2)
+      i = i2 // 2
       for j2 in range(20):
-        j = math.floor(j2 / 2)
+        j = j2 // 2
         if array[j, i] == 0:
           win.addstr("  ")
         elif array[j, i] == 1:
           win.addstr("██")
-        #coords = str(i) + "," + str(j)
-        #win.addstr(coords)
       newline(win)
       win.refresh()
 
@@ -47,10 +45,7 @@ def main(win, array: NDArray):
   curses.curs_set(0)
   win.scrollok(True)
   curses.cbreak()
-  win.addstr("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
   win.clear()
-  #array = np.random.randint(0, 2, size=(10, 10))
-  #array = np.ones((10, 10))
   gen = 1
   while 1:
     win.addstr(f'Generation: {gen}')
@@ -58,9 +53,7 @@ def main(win, array: NDArray):
     drawArray(win, array)
     time.sleep(0.5)
     win.clear()
-    nArray = conway.conwayPass(array)
-    array = nArray
-    del nArray
+    array = conway.conwayPass(array)
     gen += 1
 
 
