@@ -3,6 +3,7 @@ import math
 import time
 import numpy as np
 from numpy._typing import NDArray
+import config
 import conway
 
 def newline(win, num = 1):
@@ -21,8 +22,8 @@ def newline(win, num = 1):
 
 def drawArray(win, array: NDArray):
   if array.shape[0] > 15 or array.shape[1] > 15:
-    for i in range(array.shape[0]):
-      for j in range(array.shape[1]):
+    for i in range(array.shape[1]):
+      for j in range(array.shape[0]):
         if array[j, i] == 0:
           win.addstr(" ")
         elif array[j, i] == 1:
@@ -30,9 +31,9 @@ def drawArray(win, array: NDArray):
       newline(win)
       win.refresh()
   else:
-    for i2 in range(20):
+    for i2 in range(2 * array.shape[1]):
       i = i2 // 2
-      for j2 in range(20):
+      for j2 in range(2 * array.shape[0]):
         j = j2 // 2
         if array[j, i] == 0:
           win.addstr("  ")
@@ -51,7 +52,8 @@ def main(win, array: NDArray):
     win.addstr(f'Generation: {gen}')
     newline(win)
     drawArray(win, array)
-    time.sleep(0.5)
+    interval = config.return_config()['interval']
+    time.sleep(interval)
     win.clear()
     array = conway.conwayPass(array)
     gen += 1

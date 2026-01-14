@@ -3,32 +3,43 @@ import time
 import os
 import numpy as np
 from numpy._typing import NDArray
+import config
 import cursesui
 
 def displayCursor(win, array: NDArray, posy: int, posx: int):
   curses.start_color()
   curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
-  win.move(posy * 2 + 4, posx * 4)
-  if array[posx, posy] == 1:
-    win.addstr('####', curses.color_pair(1))
+  large = array.shape[0] > 15 or array.shape[1] > 15
+  if large:
+    cursorstr = '#'
+    win.move(posy + 4, posx)
   else:
-    win.addstr('####', curses.A_NORMAL)
-  win.move(posy * 2 + 5, posx * 4)
+    cursorstr = '####'
+    win.move(posy * 2 + 4, posx * 4)
   if array[posx, posy] == 1:
-    win.addstr('####', curses.color_pair(1))
+    win.addstr(cursorstr, curses.color_pair(1))
   else:
-    win.addstr('####', curses.A_NORMAL)
+    win.addstr(cursorstr, curses.A_NORMAL)
+  if not(large): win.move(posy * 2 + 5, posx * 4)
+  if array[posx, posy] == 1 and not(large):
+    win.addstr(cursorstr, curses.color_pair(1))
+  elif not(large):
+    win.addstr(cursorstr, curses.A_NORMAL)
   win.addstr('', curses.A_NORMAL)
   win.refresh()
 
 def main(win):
+  user_config = config.return_config()
+  h = user_config['height']
+  w = user_config['width']
+  keybinds = user_config['keybinds']
   curses.curs_set(0)
   win.scrollok(True)
   curses.cbreak()
   win.clear()
   time.sleep(1)
   userinput = 1
-  array = np.zeros((10, 10))
+  array = np.zeros((w, h))
   posx = 0
   posy = 0
   while userinput:
@@ -46,7 +57,7 @@ def main(win):
     try:
       key = win.getkey()
     except Exception:
-      key = 'KEY_UP'
+      key = keybinds['Move_Up']
     match key:
       case 'KEY_UP':
         posy -= 1
@@ -54,12 +65,12 @@ def main(win):
           posy = 0
       case 'KEY_DOWN':
         posy += 1
-        if posy > 9:
-          posy = 9
+        if posy > (h - 1):
+          posy = (h - 1)
       case 'KEY_RIGHT':
         posx += 1
-        if posx > 9:
-          posx = 9
+        if posx > (w - 1):
+          posx = (w - 1)
       case 'KEY_LEFT':
         posx -= 1
         if posx < 0:
@@ -71,10 +82,10 @@ def main(win):
       case os.linesep:
         userinput = 0
       case 'c':
-        array = np.zeros((10,10))
+        array = np.zeros((w, h))
       case 'f':
-        array = np.ones((10,10))
+        array = np.ones((w, h))
       case 'r':
-        array = np.random.randint(0, 2, size=(10, 10))
+        array = np.random.randint(0, 2, size=(w, h))
     win.clear()
-  return arrays
+  return array

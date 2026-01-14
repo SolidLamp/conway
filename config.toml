@@ -1,0 +1,16 @@
+#[config]
+interval = 0.5
+wrap = true
+height = 10
+width = 10
+
+[keybinds] # put all letters lowercase, up down right left must be written as KEY_UP and so on
+Move_Up = 'KEY_UP'
+Move_Right = 'KEY_RIGHT'
+Move_Down = 'KEY_DOWN'
+Move_Left = 'KEY_LEFT'
+Delete_Pixel = '0'
+Create_Pixel = '1'
+Randomise = 'r'
+Clear = 'c'
+Fill = 'f'
