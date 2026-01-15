@@ -1,9 +1,17 @@
 import curses
 import numpy as np
+import config
 import cursesui
 import seed
 
+def main(win):
+  curses.curs_set(0)
+  win.scrollok(True)
+  curses.cbreak()
+  win.clear()
+  default_config = config.return_config()['default_config']
+  array = seed.main(win, default_config)
+  cursesui.main(win, default_config, array)
+
 if __name__ == "__main__":
-  array = np.random.randint(0, 2, size=(10, 10))
-  array = curses.wrapper(seed.main)
-  cursesui.gui(array)
+  curses.wrapper(main)

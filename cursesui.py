@@ -1,10 +1,10 @@
 import curses
-import math
 import time
 import numpy as np
 from numpy._typing import NDArray
-import config
 import conway
+
+__maxsmall__ = 10
 
 def newline(win, num = 1):
   max_y, max_x = win.getmaxyx()
@@ -21,7 +21,7 @@ def newline(win, num = 1):
   win.refresh()
 
 def drawArray(win, array: NDArray):
-  if array.shape[0] > 15 or array.shape[1] > 15:
+  if array.shape[0] > __maxsmall__ or array.shape[1] > __maxsmall__:
     for i in range(array.shape[1]):
       for j in range(array.shape[0]):
         if array[j, i] == 0:
@@ -42,7 +42,7 @@ def drawArray(win, array: NDArray):
       newline(win)
       win.refresh()
 
-def main(win, array: NDArray):
+def main(win, settings, array: NDArray):
   curses.curs_set(0)
   win.scrollok(True)
   curses.cbreak()
@@ -52,12 +52,8 @@ def main(win, array: NDArray):
     win.addstr(f'Generation: {gen}')
     newline(win)
     drawArray(win, array)
-    interval = config.return_config()['interval']
+    interval = settings['interval']
     time.sleep(interval)
     win.clear()
-    array = conway.conwayPass(array)
+    array = conway.conwayPass(settings, array)
     gen += 1
-
-
-def gui(array):
-  curses.wrapper(main, array)

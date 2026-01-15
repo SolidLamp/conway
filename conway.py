@@ -3,37 +3,40 @@ from numpy._typing import NDArray
 
 
 def copyArray(array: NDArray):
-  new_array = np.zeros((10, 10))
-  for x in range(10):
-    for y in range(10):
+  h = array.shape[0]
+  w = array.shape[1]
+  new_array = np.zeros((h, w))
+  for x in range(w):
+    for y in range(h):
       new_array[x, y] = array[x, y]
   return new_array
 
-def ReturnCoords(coord: tuple):
+def ReturnCoords(settings: dict, coord: tuple, array: NDArray):
   x = coord[0]
   y = coord[1]
-  if x < 0 or x > 9:
-    x = x % 10
-  if y < 0 or y > 9:
-    y = y % 10
+  rows = array.shape[0]
+  cols = array.shape[1]
+  wrap = settings['wrap']
+  if (x < 0 or x > (rows - 1)) and wrap:
+    x = x % rows
+  if (y < 0 or y > (cols - 1)) and wrap:
+    y = y % cols
+  if (x != x % rows or y != y % cols) and not wrap:
+    return -1, -1
   return x, y
 
-def detectNeighbour(array: NDArray, x: int, y: int):
-  return array[x, y]
-
-def detectNeighbours(array: NDArray, x: int, y: int):
+def detectNeighbours(settings: dict, array: NDArray, x: int, y: int):
   coords = [(i, j) for i in [x - 1, x, x + 1] for j in [y - 1, y, y + 1]]
   neighbours = 0
   for coord in coords:
-    xi, yi = ReturnCoords(coord)
-    #print(coord, xi, yi)
-    #print(array[xi, yi])
-    neighbours += array[xi, yi]
+    xi, yi = ReturnCoords(settings, coord, array)
+    if xi != -1 and yi != -1:
+      neighbours += array[xi, yi]
   neighbours -= array[x, y]
   return neighbours
 
-def conway(array: NDArray, x: int, y: int):
-  neighbours = detectNeighbours(array, x, y)
+def conway(settings: dict, array: NDArray, x: int, y: int) -> int:
+  neighbours = detectNeighbours(settings, array, x, y)
   match neighbours:
     case 0 | 1:
       return 0
@@ -44,10 +47,12 @@ def conway(array: NDArray, x: int, y: int):
     case _:
       return 0
 
-def conwayPass(array: NDArray):
-  new_array = np.zeros((10, 10))
-  for x in range(10):
-    for y in range(10):
-      new_array[x, y] = conway(array, x, y)
+def conwayPass(settings: dict, array: NDArray) -> NDArray:
+  rows = array.shape[0]
+  cols = array.shape[1]
+  new_array = np.zeros((rows, cols))
+  for x in range(rows):
+    for y in range(cols):
+      new_array[x, y] = conway(settings, array, x, y)
   return new_array
 

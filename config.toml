@@ -1,4 +1,4 @@
-#[config]
+[default_config]
 interval = 0.5
 wrap = true
 height = 10
