@@ -11,6 +11,7 @@ def copyArray(array: NDArray):
       new_array[x, y] = array[x, y]
   return new_array
 
+
 def ReturnCoords(settings: dict, coord: tuple, array: NDArray):
   x = coord[0]
   y = coord[1]
@@ -25,6 +26,7 @@ def ReturnCoords(settings: dict, coord: tuple, array: NDArray):
     return -1, -1
   return x, y
 
+
 def detectNeighbours(settings: dict, array: NDArray, x: int, y: int):
   coords = [(i, j) for i in [x - 1, x, x + 1] for j in [y - 1, y, y + 1]]
   neighbours = 0
@@ -34,6 +36,7 @@ def detectNeighbours(settings: dict, array: NDArray, x: int, y: int):
       neighbours += array[xi, yi]
   neighbours -= array[x, y]
   return neighbours
+
 
 def conway(settings: dict, array: NDArray, x: int, y: int) -> int:
   neighbours = detectNeighbours(settings, array, x, y)
@@ -47,6 +50,7 @@ def conway(settings: dict, array: NDArray, x: int, y: int) -> int:
     case _:
       return 0
 
+
 def conwayPass(settings: dict, array: NDArray) -> NDArray:
   rows = array.shape[0]
   cols = array.shape[1]
@@ -55,4 +59,3 @@ def conwayPass(settings: dict, array: NDArray) -> NDArray:
     for y in range(cols):
       new_array[x, y] = conway(settings, array, x, y)
   return new_array
-

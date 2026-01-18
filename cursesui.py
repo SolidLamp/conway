@@ -5,6 +5,26 @@ from numpy._typing import NDArray
 import conway
 
 __maxsmall__ = 10
+__mindelay__ = 0.001
+
+def wait(win: curses.window, interval: float, mindelay: float = __mindelay__) -> bool:
+  """time.sleep with an interrupt
+     this code is bad but works"""
+  if isinstance(interval, int):
+    interval = float(interval)
+  if interval < 0:
+    interval = 0
+  win.nodelay(True)
+  key = win.getch()
+  while interval > 0 and key == -1:
+    time.sleep(min(mindelay, interval))
+    interval -= min(mindelay, interval)
+    key = win.getch()
+  win.nodelay(False)
+  if key == -1:
+    return False
+  else:
+    return True
 
 def newline(win, num = 1):
   max_y, max_x = win.getmaxyx()
@@ -42,7 +62,7 @@ def drawArray(win, array: NDArray):
       newline(win)
       win.refresh()
 
-def main(win, settings, array: NDArray):
+def main(win, settings: dict, array: NDArray) -> NDArray:
   curses.curs_set(0)
   win.scrollok(True)
   curses.cbreak()
@@ -53,7 +73,16 @@ def main(win, settings, array: NDArray):
     newline(win)
     drawArray(win, array)
     interval = settings['interval']
-    time.sleep(interval)
+    quit = wait(win, interval)
+    if quit:
+      break
     win.clear()
     array = conway.conwayPass(settings, array)
     gen += 1
+    if np.all(array == 0):
+      win.clear()
+      win.addstr(f"Extinct at generation {gen}\nPress any key to quit to menu...")
+      win.refresh()
+      win.getch()
+      break
+  return array

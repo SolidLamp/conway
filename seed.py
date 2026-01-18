@@ -1,15 +1,18 @@
 import curses
 import time
 import os
+import sys
 import numpy as np
 from numpy._typing import NDArray
 import config
 import cursesui
 
+__maxsmall__ = 10
+
 def displayCursor(win, array: NDArray, posy: int, posx: int):
   curses.start_color()
   curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
-  large = array.shape[0] > 15 or array.shape[1] > 15
+  large = array.shape[0] > __maxsmall__ or array.shape[1] > __maxsmall__
   if large:
     cursorstr = '#'
     win.move(posy + 4, posx)
@@ -20,7 +23,8 @@ def displayCursor(win, array: NDArray, posy: int, posx: int):
     win.addstr(cursorstr, curses.color_pair(1))
   else:
     win.addstr(cursorstr, curses.A_NORMAL)
-  if not(large): win.move(posy * 2 + 5, posx * 4)
+  if not(large):
+    win.move(posy * 2 + 5, posx * 4)
   if array[posx, posy] == 1 and not(large):
     win.addstr(cursorstr, curses.color_pair(1))
   elif not(large):
@@ -28,18 +32,13 @@ def displayCursor(win, array: NDArray, posy: int, posx: int):
   win.addstr('', curses.A_NORMAL)
   win.refresh()
 
-def main(win):
-  user_config = config.return_config()
-  h = user_config['height']
-  w = user_config['width']
-  keybinds = user_config['keybinds']
-  curses.curs_set(0)
-  win.scrollok(True)
-  curses.cbreak()
+def main(win, settings: dict, array: NDArray) -> NDArray:
   win.clear()
+  h = settings['height']
+  w = settings['width']
+  keybinds = config.return_config()['keybinds']
   time.sleep(1)
   userinput = 1
-  array = np.zeros((w, h))
   posx = 0
   posy = 0
   while userinput:
@@ -87,5 +86,7 @@ def main(win):
         array = np.ones((w, h))
       case 'r':
         array = np.random.randint(0, 2, size=(w, h))
+      case 'q':
+        sys.exit()
     win.clear()
   return array

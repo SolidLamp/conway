@@ -10,8 +10,12 @@ def main(win):
   curses.cbreak()
   win.clear()
   default_config = config.return_config()['default_config']
-  array = seed.main(win, default_config)
-  cursesui.main(win, default_config, array)
+  h = default_config['height']
+  w = default_config['width']
+  array = np.zeros((w, h))
+  while 1:
+    array = seed.main(win, default_config, array)
+    array = cursesui.main(win, default_config, array)
 
 if __name__ == "__main__":
   curses.wrapper(main)
